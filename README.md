@@ -26,6 +26,16 @@ As well as [Linux](<https://github.com/methylDragon/linux-reference>) to be able
 
 After reading up on the ROS tutorials, you can do some further reading!
 
+### Robotic Manipulator Planning with MoveIt!
+
+![1563793456590](assets/1563793456590.png)
+
+> The MoveIt! project is a ROS package that helps with motion planning for robotic manipulators. As such, it is especially useful for working with and planning for arms!
+
+<https://github.com/methylDragon/moveit-tutorial>
+
+
+
 ### Point Cloud Library Integration with ROS
 
 ![CylinderSegmentation.gif](assets/CylinderSegmentationFast.gif)
