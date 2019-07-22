@@ -1,4 +1,4 @@
-# Writing ROS Nodes
+# ROS Nodes and Parameters
 
 Author: methylDragon  
 Fairly comprehensive ROS crash course!  
@@ -327,11 +327,18 @@ def talker():
     rospy.init_node('talker', anonymous = True)
     rate = rospy.Rate(10) # 10hz
     
+    # Create message object
+    string_msg = String()
+    
     while not rospy.is_shutdown():
         hello_str = "hello world %s" % rospy.get_time()
         rospy.loginfo(hello_str)
         
-        pub.publish(hello_str)
+        # Attach data to message field
+        string_msg.data = hello_str
+        
+        # Publish
+        pub.publish(string_msg)
         rate.sleep()
 
 if __name__ == '__main__':
@@ -368,6 +375,8 @@ def listener():
 if __name__ == '__main__':
     listener()
 ```
+
+> A **class based implementation** of pub sub for Python can also be found in the Starter Code and Resources directory!
 
 
 
@@ -925,15 +934,13 @@ int main(int argc, char **argv)
 
 
 
-
-
 ### 2.13 roscpp: Basic Subscriber  <a name="2.13"></a>
 
 [go to top](#top)
 
 ```c++
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
 
 void chatter_callback(const std_msgs::String& msg)
 {
@@ -953,6 +960,8 @@ int main(int argc, char **argv)
     return 0;
 }
 ```
+
+> A **class based implementation** of pub sub for C++ can also be found in the Starter Code and Resources directory!
 
 
 
@@ -1294,6 +1303,146 @@ Where:
 
 
 
+## 3. Dynamic Reconfigure <a name="3"></a>
+
+### 3.1 Introduction <a name="3.1"></a>
+
+[go to top](#top)
+
+> At present, the focus of `dynamic_reconfigure` is on providing a standard way to expose a subset of a node's parameters to external reconfiguration. Client programs, e.g., GUIs, can query the node for the set of reconfigurable parameters, including their names, types, and ranges, and present a customized interface to the user. This is especially useful for hardware drivers, but has broader applicability.
+>
+> <http://wiki.ros.org/dynamic_reconfigure>
+
+Basically. If you want a convenient way to reconfigure ROS parameters on the fly (for example, through use of a GUI), dynamic reconfigure is the way to do it!
+
+The reason for needing something like this is because ROS parameters are usually loaded once, and not checked again. So even if the ROS parameter on the parameter server has changed, nodes that use the parameter will not update the parameter's value. There has to be a provision for specifically detecting changes in parameters **dynamically** and explicitly updating them. **Dynamically**. Dynamic reconfigure wraps this functionality.
+
+Most of the following sections will be adapted from [the dynamic_reconfigure tutorials](<http://wiki.ros.org/dynamic_reconfigure/Tutorials>).
+
+
+
+### 3.2 rqt_reconfigure <a name="3.2"></a>
+
+[go to top](#top)
+
+![Image result for rqt_reconfigure](assets/7580OS_09_16.jpg)
+
+One of the best ways to interact with dynamically reconfigurable nodes and parameters is through the use of the `rqt_reconfigure` package. It features a nice GUI to configure these nodes!
+
+**Installation**
+
+```shell
+sudo apt install ros-$ROS_DISTRO-rqt_reconfigure
+```
+
+**Usage**
+
+```shell
+rosrun rqt_reconfigure rqt_reconfigure
+```
+
+**Gotchas**
+
+- Make sure you **run the rqt_reconfigure node last**! All dynamically reconfigurable nodes need to start and bind their parameters first before rqt_reconfigure can see them. You can technically refresh, but it makes the node list very messy.
+- **Remember to save!** rqt_reconfigure will not save the parameter values to the yaml files or launchfiles that load them.
+- **Saving on rqt_reconfigure is different from locking in values in .yaml and lauchfiles**. When you save and load rqt_reconfigure configurations, it is only to and from the state of the rqt_reconfigure node. Once you've tuned your robot on rqt_reconfigure, do transfer the parameter values to a .yaml or .launch file!
+- **Only nodes and parameters that have been properly configured to use dynamic reconfigure will appear on the rqt_reconfigure GUI**.
+
+
+
+### 3.3 cfg Files <a name="3.3"></a>
+
+[go to top](#top)
+
+Every parameter that is meant to be used with dynamic_reconfigure requires a cfg file to **define names, types, level, descriptions, defaults, min, and maxes.**
+
+It's pretty simple to make one too! It's just Python.
+
+[Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/HowToWriteYourFirstCfgFile>)
+
+![Screenshot-Reconfigure.png](assets/Screenshot-Reconfigure.png)
+
+```python
+#!/usr/bin/env python
+PACKAGE = "PACKAGE_NAME"
+
+from dynamic_reconfigure.parameter_generator_catkin import *
+
+gen = ParameterGenerator()
+
+# Add parameters
+gen.add("int_param",    int_t,    0, "An Integer parameter", 50,  0, 100)
+gen.add("double_param", double_t, 0, "A double parameter",    .5, 0,   1)
+gen.add("str_param",    str_t,    0, "A string parameter",  "Hello World")
+gen.add("bool_param",   bool_t,   0, "A Boolean parameter",  True)
+
+# Create an enum mapping (Small is 0, Medium is 1, ...)
+size_enum = gen.enum([ gen.const("Small",      int_t, 0, "A small constant"),
+                       gen.const("Medium",     int_t, 1, "A medium constant"),
+                       gen.const("Large",      int_t, 2, "A large constant"),
+                       gen.const("ExtraLarge", int_t, 3, "An extra large constant")],
+                       "An enum to set size")
+
+# Add enum parameter
+gen.add("size", int_t, 0, "A size parameter which is edited via an enum", 1, 0, 3, edit_method=size_enum)
+
+exit(gen.generate(PACKAGE, "POSSIBLE_NODE_NAME", "GENERATED_FILES_PREFIX"))
+```
+
+#### **Parameter Generator**
+
+Let's break down the parameter generator function arguments.
+
+| Argument Number | Name        | Description                                                  |
+| :-------------: | ----------- | ------------------------------------------------------------ |
+|        0        | name        | Name of the parameter                                        |
+|        1        | paramtype   | Type of the parameter (valid types: `int_t`, `double_t`, `str_t`, `bool_t`) |
+|        2        | level       | One way to group parameters as you like. Bits of all parameter levels that have changed will be `OR`ed together for the service callback. |
+|        3        | description | Description of the parameter                                 |
+|        4        | default     | Default value of the parameter                               |
+|        5        | min         | Minimum value                                                |
+|        6        | max         | Maximum value                                                |
+
+#### **Generate Call**
+
+The generate call will then result in the generation of the relevant files. The arguments are as follows:
+
+| Argument Number | Name      | Description                                                  |
+| :-------------: | --------- | ------------------------------------------------------------ |
+|        0        | package   | Name of the package                                          |
+|        1        | node_name | Name of possible nodes the configuration file will apply to. (Used for generation of docs only.) |
+|        2        | prefix    | Name prefix all generated files will get. (Eg. `<prefix>Config.h`, `<prefix>Config.py`) |
+
+
+
+### 3.4 Setting Up Catkin for Dynamic Reconfigure <a name="3.4"></a>
+
+[go to top](#top)
+
+Add these to your `package.xml`
+
+```xml
+<build_depend>dynamic_reconfigure</build_depend>
+<run_depend>dynamic_reconfigure</run_depend>
+```
+
+And these to your `CMakeLists.txt`
+
+```cmake
+find_package(catkin REQUIRED dynamic_reconfigure)
+generate_dynamic_reconfigure_options(
+  cfg/YOUR_CFG_FILE.cfg
+)
+
+add_dependencies(SOME_NODE ${PROJECT_NAME}_gencfg)
+```
+
+Easy! Or you can just adapt and use the starter code.
+
+
+
+
+
 
 ```
                             .     .
@@ -1305,4 +1454,4 @@ Where:
 
 ------
 
-[![Yeah! Buy the DRAGON a COFFEE!](../../_assets/COFFEE%20BUTTON%20%E3%83%BE(%C2%B0%E2%88%87%C2%B0%5E).png)](https://www.buymeacoffee.com/methylDragon)
+[![Yeah! Buy the DRAGON a COFFEE!](../assets/COFFEE%20BUTTON%20%E3%83%BE(%C2%B0%E2%88%87%C2%B0%5E).png)](https://www.buymeacoffee.com/methylDragon)
