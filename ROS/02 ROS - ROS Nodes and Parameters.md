@@ -38,6 +38,16 @@ and ETHz http://www.rsl.ethz.ch/education-students/lectures/ros.html
    2.13 [roscpp: Basic Subscriber](#2.13)    
    2.14 [roscpp: Parameters](#2.14)    
    2.15 [Making and building the roscpp package](#2.15)    
+3. [Dynamic Reconfigure](#3)    
+   3.1   [Introduction](#3.1)    
+   3.2   [Command Line](#3.2)    
+   3.3   [rqt_reconfigure](#3.3)    
+   3.4   [cfg Files](#3.4)    
+   3.5   [Setting Up Catkin for Dynamic Reconfigure](#3.5)    
+   3.6   [rospy: Dynamic Reconfigure](#3.6)    
+   3.7   [rospy: Dynamic Reconfigure Client](#3.7)    
+   3.8   [roscpp: Dynamic Reconfigure](#3.8)    
+   3.9   [roscpp: Dynamic Reconfigure Client](#3.9)    
 
 
 
@@ -1321,7 +1331,31 @@ Most of the following sections will be adapted from [the dynamic_reconfigure tut
 
 
 
-### 3.2 rqt_reconfigure <a name="3.2"></a>
+### 3.2 Command Line <a name="3.1"></a>
+
+[go to top](#top)
+
+You're able to dynamically reconfigure nodes by calling the ROS service that is exposed by the dynamic reconfigure server each dynamically reconfigurable node is running.
+
+Use tab completion to automatically generate the configurable parameter names!
+
+```shell
+$ rosservice call /NODE_NAME/set_parameters
+```
+
+You can also keep track of the descriptions of the dynamically reconfigurable parameters or any updates that the server receives by calling
+
+```shell
+# For descriptions
+$ rostopic echo /NODE_NAME/parameter_descriptions
+
+# For updates
+$ rostopic echo /NODE_NAME/parameter_updates
+```
+
+
+
+### 3.3 rqt_reconfigure <a name="3.3"></a>
 
 [go to top](#top)
 
@@ -1332,13 +1366,13 @@ One of the best ways to interact with dynamically reconfigurable nodes and param
 **Installation**
 
 ```shell
-sudo apt install ros-$ROS_DISTRO-rqt_reconfigure
+$ sudo apt install ros-$ROS_DISTRO-rqt_reconfigure
 ```
 
 **Usage**
 
 ```shell
-rosrun rqt_reconfigure rqt_reconfigure
+$ rosrun rqt_reconfigure rqt_reconfigure
 ```
 
 **Gotchas**
@@ -1350,7 +1384,7 @@ rosrun rqt_reconfigure rqt_reconfigure
 
 
 
-### 3.3 cfg Files <a name="3.3"></a>
+### 3.4 cfg Files <a name="3.4"></a>
 
 [go to top](#top)
 
@@ -1358,9 +1392,11 @@ Every parameter that is meant to be used with dynamic_reconfigure requires a cfg
 
 It's pretty simple to make one too! It's just Python.
 
-[Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/HowToWriteYourFirstCfgFile>)
+> Remember to enable execution!
 
 ![Screenshot-Reconfigure.png](assets/Screenshot-Reconfigure.png)
+
+[Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/HowToWriteYourFirstCfgFile>)
 
 ```python
 #!/usr/bin/env python
@@ -1377,11 +1413,11 @@ gen.add("str_param",    str_t,    0, "A string parameter",  "Hello World")
 gen.add("bool_param",   bool_t,   0, "A Boolean parameter",  True)
 
 # Create an enum mapping (Small is 0, Medium is 1, ...)
-size_enum = gen.enum([ gen.const("Small",      int_t, 0, "A small constant"),
-                       gen.const("Medium",     int_t, 1, "A medium constant"),
-                       gen.const("Large",      int_t, 2, "A large constant"),
-                       gen.const("ExtraLarge", int_t, 3, "An extra large constant")],
-                       "An enum to set size")
+size_enum = gen.enum([gen.const("Small",      int_t, 0, "A small constant"),
+                      gen.const("Medium",     int_t, 1, "A medium constant"),
+                      gen.const("Large",      int_t, 2, "A large constant"),
+                      gen.const("ExtraLarge", int_t, 3, "An extra large constant")],
+                      "An enum to set size")
 
 # Add enum parameter
 gen.add("size", int_t, 0, "A size parameter which is edited via an enum", 1, 0, 3, edit_method=size_enum)
@@ -1415,7 +1451,7 @@ The generate call will then result in the generation of the relevant files. The 
 
 
 
-### 3.4 Setting Up Catkin for Dynamic Reconfigure <a name="3.4"></a>
+### 3.5 Setting Up Catkin for Dynamic Reconfigure <a name="3.5"></a>
 
 [go to top](#top)
 
@@ -1423,7 +1459,7 @@ Add these to your `package.xml`
 
 ```xml
 <build_depend>dynamic_reconfigure</build_depend>
-<run_depend>dynamic_reconfigure</run_depend>
+<exec_depend>dynamic_reconfigure</exec_depend>
 ```
 
 And these to your `CMakeLists.txt`
@@ -1440,6 +1476,232 @@ add_dependencies(SOME_NODE ${PROJECT_NAME}_gencfg)
 Easy! Or you can just adapt and use the starter code.
 
 
+
+### 3.6 rospy: Dynamic Reconfigure <a name="3.6"></a>
+
+[go to top](#top)
+
+[Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/SettingUpDynamicReconfigureForANode(python)>)
+
+If you want to use dynamic reconfigure to modify variables storing parameter values, you'd do it in the callback. In here we're just printing it to show what's going on
+
+```Python
+#!/usr/bin/env python
+
+import rospy
+
+from dynamic_reconfigure.server import Server
+from dynamic_reconfigure_example.cfg import ExampleConfig
+
+# Create reconfigure callback
+def callback(config, level):
+    rospy.loginfo("""Reconfigure Request: {int_param}, {double_param},\ 
+          {str_param}, {bool_param}, {size}""".format(**config))
+    
+    # Config is returned by the server
+    return config
+
+if __name__ == "__main__":
+    rospy.init_node("dynamic_reconfigure_example", anonymous = False)
+    
+    # Bind callback
+    srv = Server(ExampleConfig, callback)
+    rospy.spin()
+```
+
+**Run The Example!**
+
+```shell
+# Terminal 1
+$ roscore
+
+# Terminal 2
+$ rosrun dynamic_reconfigure_example dynamic_reconfigure_example
+
+# Terminal 3
+$ rosrun rqt_reconfigure rqt_reconfigure
+```
+
+
+
+### 3.7 rospy: Dynamic Reconfigure Client <a name="3.7"></a>
+
+[go to top](#top)
+
+[Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/UsingTheDynamicReconfigurePythonClient>)
+
+If you want to use dynamic reconfigure to modify variables storing parameter values, you'd do it in the callback. In here we're just printing it to show what's going on
+
+```Python
+#!/usr/bin/env python
+
+import rospy
+import dynamic_reconfigure.client
+
+# Optional callback for the config returned by the server
+def callback(config):
+    rospy.loginfo("Config set to {int_param}, {double_param}, {str_param}, {bool_param}, {size}".format(**config))
+
+if __name__ == "__main__":
+    rospy.init_node("dynamic_reconfigure_client")
+
+    # We target the server with the first argument
+    client = dynamic_reconfigure.client.Client("dynamic_reconfigure_example", timeout=30, config_callback=callback)
+
+    r = rospy.Rate(0.5)
+    x = 0
+    b = False
+    while not rospy.is_shutdown():
+        x = x + 1
+        if x > 10:
+            x = 0
+        b = not b
+        client.update_configuration({"int_param": x,
+                                     "double_param": (1 / (x + 1)),
+                                     "str_param": str(rospy.get_rostime()),
+                                     "bool_param": b,
+                                     "size": 1})
+        r.sleep()
+```
+
+**Run The Example!**
+
+```shell
+# Terminal 1
+$ roscore
+
+# Terminal 2
+$ rosrun dynamic_reconfigure_example dynamic_reconfigure_example
+
+# Terminal 3
+$ rosrun dynamic_reconfigure_example dynamic_reconfigure_client
+```
+
+
+
+### 3.8 roscpp: Dynamic Reconfigure <a name="3.8"></a>
+
+[go to top](#top)
+
+[Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/SettingUpDynamicReconfigureForANode(cpp)>)
+
+If you want to use dynamic reconfigure to modify variables storing parameter values, you'd do it in the callback. In here we're just printing it to show what's going on
+
+```Python
+#include <ros/ros.h>
+
+#include <dynamic_reconfigure/server.h>
+#include <dynamic_reconfigure_example/ExampleConfig.h>
+
+void callback(dynamic_reconfigure_example::ExampleConfig &config, uint32_t level)
+{
+  ROS_INFO("Reconfigure Request: %d %f %s %s %d", 
+            config.int_param,
+            config.double_param, 
+            config.str_param.c_str(), 
+            config.bool_param ? "True" : "False", 
+            config.size);
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "dynamic_reconfigure_example");
+
+  dynamic_reconfigure::Server<dynamic_reconfigure_example::ExampleConfig> server;
+  dynamic_reconfigure::Server<dynamic_reconfigure_example::ExampleConfig>::CallbackType f;
+
+  f = boost::bind(&callback, _1, _2);
+  server.setCallback(f);
+
+  ROS_INFO("Spinning node");
+  ros::spin();
+  return 0;
+}
+```
+
+**Run The Example!**
+
+```shell
+# Terminal 1
+$ roscore
+
+# Terminal 2
+$ rosrun dynamic_reconfigure_example dynamic_reconfigure_example
+
+# Terminal 3
+$ rosrun rqt_reconfigure rqt_reconfigure
+```
+
+
+
+### 3.9 roscpp: Dynamic Reconfigure Client <a name="3.9"></a>
+
+[go to top](#top)
+
+Unfortunately there doesn't seem to be a ready-made client for roscpp. But you can just use the raw service interface instead!
+
+```c++
+#include <ros/ros.h>
+
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure_example/ExampleConfig.h>
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "dynamic_reconfigure_client");
+
+  ros::NodeHandle nh;
+
+  // Remember to input the name of the server that the
+  // dynamically reconfigurable node is hosting!
+  ros::ServiceClient client = nh.serviceClient<dynamic_reconfigure::Reconfigure>("/dynamic_reconfigure_example/set_parameters");
+
+  // Create service message
+  dynamic_reconfigure::Reconfigure service;
+
+  // Create dependent messages
+  dynamic_reconfigure::IntParameter int_param;
+  int_param.name = "int_param";
+  int_param.value = 0;
+
+  dynamic_reconfigure::DoubleParameter double_param;
+  double_param.name = "double_param";
+  double_param.value = 1.0;
+
+  dynamic_reconfigure::StrParameter str_param;
+  str_param.name = "str_param";
+  str_param.value = "Rawr";
+
+  dynamic_reconfigure::BoolParameter bool_param;
+  bool_param.name = "bool_param";
+  bool_param.value = true;
+
+  dynamic_reconfigure::IntParameter size;
+  size.name = "size";
+  size.value = 0;
+
+  // Populate request
+  service.request.config.ints.push_back(int_param);
+  service.request.config.doubles.push_back(double_param);
+  service.request.config.strs.push_back(str_param);
+  service.request.config.bools.push_back(bool_param);
+  service.request.config.ints.push_back(size);
+
+  // Service callback function
+  // client.call(service) calls the client!
+  if (client.call(service))
+  {
+    ROS_INFO("Reconfigure call succeeded!");
+  }
+  else
+  {
+    ROS_INFO("Reconfigure call failed!");
+    return 1;
+  }
+
+  return 0;
+}
+```
 
 
 
