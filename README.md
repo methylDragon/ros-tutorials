@@ -30,6 +30,8 @@ After reading up on the ROS tutorials, you can do some further reading!
 
 ![CylinderSegmentation.gif](assets/CylinderSegmentationFast.gif)
 
+> The **Point Cloud Library** (or **PCL**) is a **large scale, open project [1]** for 2D/3D image and point cloud processing. The PCL framework contains numerous state-of-the art algorithms including filtering, feature estimation, surface reconstruction, registration, model fitting and segmentation. These algorithms can be used, for example, to filter outliers from noisy data, stitch 3D point clouds together, segment relevant parts of a scene, extract keypoints and compute descriptors to recognize objects in the world based on their geometric appearance, and create surfaces from point clouds and visualize them -- to name a few.
+
 <https://github.com/methylDragon/pcl-ros-tutorial>
 
 
@@ -37,6 +39,8 @@ After reading up on the ROS tutorials, you can do some further reading!
 ### Sensor Fusion with ROS
 
 [![Click to watch video!](assets/youtube_thumbnail.png)](https://youtu.be/5vZOvISwT94)
+
+> The robot_localisation package in ROS is a very useful package for fusing any number of sensors using various flavours of Kalman Filters!
 
 <https://github.com/methylDragon/ros-sensor-fusion-tutorial>
 
