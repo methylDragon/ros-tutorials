@@ -11,11 +11,18 @@ def talker():
     rospy.init_node('talker', anonymous = True)
     rate = rospy.Rate(10) # 10hz
     
+    # Create message object
+    string_msg = String()
+    
     while not rospy.is_shutdown():
-        hello_str = "Rawr! %s" % rospy.get_time()
+        hello_str = "hello world %s" % rospy.get_time()
         rospy.loginfo(hello_str)
         
-        pub.publish(hello_str)
+        # Attach data to message field
+        string_msg.data = hello_str
+        
+        # Publish
+        pub.publish(string_msg)
         rate.sleep()
 
 if __name__ == '__main__':
