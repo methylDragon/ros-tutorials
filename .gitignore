@@ -3,3 +3,5 @@
 *.save
 *.bak
 *.pyc
+
+*.no_toc

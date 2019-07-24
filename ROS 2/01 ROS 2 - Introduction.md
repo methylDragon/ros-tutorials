@@ -21,11 +21,39 @@ and [some other places](<http://docs.erlerobotics.com/robot_operating_system/ros
 
 
 
-## Table Of Contents
+## Table Of Contents <a name="top"></a>
+
+1. [Introduction](#1)    
+2. [Installation](#2)    
+   2.1 [Installing ROS 2](#2.1)    
+   2.2 [Optional: Installing Additional Middleware Implementations](#2.2)    
+3. [colcon](#3)    
+   3.1 [Introduction](#3.1)    
+   3.2 [Directories](#3.2)    
+   3.3 [Command Line](#3.3)    
+   3.4 [Creating an Example Workspace](#3.4)    
+4. [Concepts](#4)    
+   4.1 [ROS 1 vs ROS 2](#4.1)    
+   4.2 [DDS](#4.2)    
+   4.3 [ROS 2 Architecture](#4.3)    
+   4.4 [ROS 2 Internals](#4.4)    
+   4.5 [ROS 2 Graph Concepts](#4.5)    
+   4.6 [ROS 2 Client Libraries](#4.6)    
+   4.7 [Quality of Service (QoS)](#4.7)    
+   4.8 [ROS 2 Daemon](#4.8)    
+5. [ROS 2 Basics](#5)    
+   5.1 [Command Line Interface](#5.1)    
+   5.2 [RQT and Visualising the ROS Graph](#5.2)    
+   5.3 [Node Arguments and Remapping](#5.3)    
+   5.4 [Parameter Files](#5.4)    
+   5.5 [Launch](#5.5)    
+   5.6 [Launch Files](#5.6)    
+   5.7 [Bridging ROS 1 and ROS 2](#5.7)    
 
 
 
-## Introduction
+
+## 1. Introduction <a name="1"></a>
 
 ROS 2 was built to overcome some of the limitations of ROS 1, and as a means to refresh the interfaces and technologies used. (Eg. ROS 2 targets C++11 onwards and Python 3.5 while ROS 1 is usually stuck with Python 2 and C++4)
 
@@ -74,9 +102,11 @@ Additionally, since ROS 2 is using a middleware layer, it is fairly simple to sw
 
 
 
-## Installation
+## 2. Installation <a name="2"></a>
 
-### Installing ROS 2
+### 2.1 Installing ROS 2 <a name="2.1"></a>
+[go to top](#top)
+
 
 This particular tutorial is configured to install ROS 2 Dashing for Ubuntu 18.04.
 
@@ -127,7 +157,9 @@ sudo apt install ros-dashing-ros1-bridge
 
 
 
-### Optional: Installing Additional Middleware Implementations
+### 2.2 Optional: Installing Additional Middleware Implementations <a name="2.2"></a>
+[go to top](#top)
+
 
 These are **optional**! They're also not really fully supported.
 
@@ -153,7 +185,7 @@ export RMW_IMPLEMENTATION=rmw_connext_cpp
 
 
 
-## colcon
+## 3. colcon <a name="3"></a>
 
 **colcon - collective construction**
 
@@ -161,7 +193,9 @@ Before we can really get into the nitty gritty of how ROS 2 works, and all the w
 
 
 
-### Introduction
+### 3.1 Introduction <a name="3.1"></a>
+[go to top](#top)
+
 
 [colcon](<https://colcon.readthedocs.io/en/released/user/quick-start.html>) is the [universal build tool](<http://design.ros2.org/articles/build_tool.html>) that iterates on all past build tools (`catkin`, `catkin_make`, and `ament_tools`) that is meant to allow you to build ROS 1 and ROS 2 packages.
 
@@ -171,7 +205,9 @@ Before we can really get into the nitty gritty of how ROS 2 works, and all the w
 
 
 
-### Directories
+### 3.2 Directories <a name="3.2"></a>
+[go to top](#top)
+
 
 Like ROS 1 with `catkin`, ROS 2 packages are built within workspaces. These workspaces include several directories.
 
@@ -186,7 +222,9 @@ Like ROS 1 with `catkin`, ROS 2 packages are built within workspaces. These work
 
 
 
-### Command Line
+### 3.3 Command Line <a name="3.3"></a>
+[go to top](#top)
+
 
 You can invoke `colcon` using the command line. Invoke them in the workspace directory!
 
@@ -202,7 +240,9 @@ $ colcon build --packages-up-to <name-of-pkg>  # Selective build
 
 
 
-### Creating an Example Workspace
+### 3.4 Creating an Example Workspace <a name="3.4"></a>
+[go to top](#top)
+
 
 Ok! So let's just go ahead and create our example workspace that we'll use to go through the tutorial with. We'll be using the ros2 example repository.
 
@@ -233,9 +273,11 @@ colcon build --symlink-install
 
 
 
-## Concepts
+## 4. Concepts <a name="4"></a>
 
-### ROS 1 vs ROS 2
+### 4.1 ROS 1 vs ROS 2 <a name="4.1"></a>
+[go to top](#top)
+
 
 It makes sense to first go briefly through the differences between ROS 1 and ROS 2.
 
@@ -270,7 +312,9 @@ Mainly:
 
 
 
-### DDS
+### 4.2 DDS <a name="4.2"></a>
+[go to top](#top)
+
 
 Since ROS 2 is built on DDS, it makes a little bit of sense to go through it. Remember again that:
 
@@ -310,7 +354,9 @@ Since ROS 2 is built on DDS, it makes a little bit of sense to go through it. Re
 
 
 
-### ROS 2 Architecture
+### 4.3 ROS 2 Architecture <a name="4.3"></a>
+[go to top](#top)
+
 
 Whew! Time to actually get down to business.
 
@@ -340,7 +386,9 @@ The above image should be self-explanatory. You'll generally only have to deal w
 
 
 
-### ROS 2 Internals
+### 4.4 ROS 2 Internals <a name="4.4"></a>
+[go to top](#top)
+
 
 There are a bunch of helper scripts **that you will generally never have to care about** that goes about generating all the necessary **interactive data language** (.idl) files, that will be necessary for interacting with the DDS layer.
 
@@ -380,7 +428,9 @@ ROS .msg files are used within ROS, whereas DDS .idl files will be used within t
 
 
 
-### ROS 2 Graph Concepts
+### 4.5 ROS 2 Graph Concepts <a name="4.5"></a>
+[go to top](#top)
+
 
 [Source](<https://index.ros.org//doc/ros2/Concepts/Overview-of-ROS-2-concepts/>)
 
@@ -441,7 +491,9 @@ Note that this means that every node keeps track of the other nodes in an intern
 
 
 
-### ROS 2 Client Libraries
+### 4.6 ROS 2 Client Libraries <a name="4.6"></a>
+[go to top](#top)
+
 
 Client libraries are the libraries and APIs that you will leverage to talk with the entire ROS 2 system. They're built to abstract away the nitty gritty DDS stuff, and help you maintain consistent behaviour while being easier to write.
 
@@ -461,7 +513,9 @@ At time of writing theres client libraries for:
 
 
 
-### Quality of Service (QoS)
+### 4.7 Quality of Service (QoS) <a name="4.7"></a>
+[go to top](#top)
+
 
 [Source](<https://index.ros.org/doc/ros2/Concepts/About-Quality-of-Service-Settings/>)
 
@@ -567,7 +621,9 @@ Remember that in order for nodes to talk to each other, they **need to have comp
 
 
 
-### ROS 2 Daemon
+### 4.8 ROS 2 Daemon <a name="4.8"></a>
+[go to top](#top)
+
 
 😈 :eyes:
 
@@ -583,9 +639,11 @@ To start the daemon, you just have to **use the CLI**. Any command that tries to
 
 
 
-## ROS 2 Basics
+## 5. ROS 2 Basics <a name="5"></a>
 
-### Command Line Interface
+### 5.1 Command Line Interface <a name="5.1"></a>
+[go to top](#top)
+
 
 Ok! Now let's get down and dirty with the CLI for ROS 2. Exciting stuff!
 
@@ -686,7 +744,9 @@ $ ros2 run demo_nodes_py listener
 
 
 
-### RQT and Visualising the ROS Graph
+### 5.2 RQT and Visualising the ROS Graph <a name="5.2"></a>
+[go to top](#top)
+
 
 Our good old friend, ROS QT. GUI tools!
 
@@ -716,7 +776,9 @@ $ ros2 run rqt_gui rqt_gui -s rqt_graph
 
 
 
-### Node Arguments and Remapping
+### 5.3 Node Arguments and Remapping <a name="5.3"></a>
+[go to top](#top)
+
 
 [Source](<https://index.ros.org/doc/ros2/Tutorials/Node-arguments/>)
 
@@ -749,7 +811,9 @@ $ ros2 run demo_nodes_cpp parameter_blackboard __params:=demo_params.yaml
 
 
 
-### Parameter Files
+### 5.4 Parameter Files <a name="5.4"></a>
+[go to top](#top)
+
 
 [Source](<https://github.com/ros2/rcl/tree/master/rcl_yaml_param_parser>)
 
@@ -785,7 +849,9 @@ parameter_blackboard:
 
 
 
-### Launch
+### 5.5 Launch <a name="5.5"></a>
+[go to top](#top)
+
 
 Of course we have a utility for launching multiple nodes at once provisioned to us in ROS 2.
 
@@ -795,7 +861,9 @@ $ ros2 launch <PACKAGE_NAME> <LAUNCH_FILE_NAME>
 
 
 
-### Launch Files
+### 5.6 Launch Files <a name="5.6"></a>
+[go to top](#top)
+
 
 Launch files, on the other hand, will get a lot more complicated.
 
@@ -803,29 +871,266 @@ The reason for this is, up to Dashing (and possibly beyond), the standard .xml f
 
 This lets us do a lot of cool stuff, at the cost of **a pretty hefty amount of boilerplate**. So thank goodness we have a reference!
 
-
-
-#### **Minimal Launch File** (WIP)
-
-
-
-#### **Setting Parameters**
+> **Note**: Since ROS 2 changed quite a bit of stuff from Crystal to Dashing, these few examples will be for Dashing onwards, for the Python launchfile system. I might get back to this to include the .xml version once that is released.
 
 
 
-#### **Taking Arguments**
+#### **Minimal Launch File**
+
+For Python launchfiles, you just need to write the `generate_launch_description()` function definition!
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="talker",
+            node_name="talker",
+            output="screen"),
+
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="listener",
+            node_name="listener",
+            output="screen",),
+        
+        launch.actions.LogInfo(msg="WOW") # With logging!
+    ])
+```
+
+
+
+#### **Naming and Remapping**
+
+There's a arguments for changing a node's namespace, name, and remapping topics.
+
+![1563942689701](assets/1563942689701.png)
+
+(`rqt_graph` is bugging out here, but `ros2 node list` shows `/rawr/wow_talker` and `rawr/listener`!)
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="talker",
+            node_name="wow_talker", # Change node name
+            node_namespace="rawr", # Change node namespace
+            output="screen",
+            remappings=[("chatter", "banter")]),
+        
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="listener",
+            node_name="listener",
+            node_namespace="rawr",
+            remappings=[("chatter", "banter")],
+            output="screen")
+    ])
+```
+
+
+
+#### **Node Parameters**
+
+Set parameters using parameter .yaml files
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_cpp",
+            node_executable="parameter_blackboard",
+            node_name="parameter_blackboard",
+            output="screen",
+            parameters=["demo_params.yaml"])
+    ])
+```
+
+Alternatively, dictionaries work too!
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_cpp",
+            node_executable="parameter_blackboard",
+            node_name="parameter_blackboard",
+            output="screen",
+            parameters=[{"wow": "ok"}])
+    ])
+```
+
+Or both!
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_cpp",
+            node_executable="parameter_blackboard",
+            node_name="parameter_blackboard",
+            output="screen",
+            parameters=[{"wow": "ok"}, "demo_params.yaml"])
+    ])
+```
+
+
+
+#### **Node Arguments**
+
+Set arguments that nodes will take
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="talker",
+            node_name="talker",
+            output="screen"),
+
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="listener_qos",
+            node_name="listener",
+            output="screen",
+            arguments=["--number_of_cycles", "10"])
+    ])
+```
+
+
+
+#### **Launch Arguments and Substitution**
+
+Expose launch arguments for use in the command line
+
+```python
+import launch
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch.actions.DeclareLaunchArgument('msg', default_value='hello world'),
+        # This means that passing the argument is required!
+        launch.actions.DeclareLaunchArgument('other'),
+        launch.actions.LogInfo(msg=launch.substitutions.LaunchConfiguration('msg')),
+        launch.actions.LogInfo(msg=launch.substitutions.LaunchConfiguration('other')),
+    ])
+```
+
+Launch it using
+
+```shell
+$ ros2 launch some_launch_file.py other:=<WHATEVER_ARGUMENT_HERE>
+```
 
 
 
 #### **Conditionals**
 
-
-
-#### **Calling other Launch Files**
+Just use Python conditionals!
 
 
 
-#### **Remapping Nodes**
+#### **Binding Exit Handlers**
+
+```python
+import launch
+import launch_ros.actions
+
+def generate_launch_description():
+    return launch.LaunchDescription([
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="talker",
+            node_name="talker",
+            output="screen"),
+
+        launch_ros.actions.Node(
+            package="demo_nodes_py",
+            node_executable="listener_qos",
+            node_name="listener",
+            output="screen",
+            arguments=["--number_of_cycles", "1"],
+            on_exit=launch.actions.Shutdown()) # Kills launch on exit of listener!
+    ])
+```
+
+
+
+#### **And Much, Much, More!**
+
+I can't possibly go through all of them. There's stuff for text substitution, lifecycle handling, more advanced event handling, and much more!
+
+But you can just look at the [source](<https://github.com/ros2/launch/) [code](<https://github.com/ros2/launch_ros/>). The documentation is unfortunately a little sparse though.
+
+
+
+### 5.7 Bridging ROS 1 and ROS 2 <a name="5.7"></a>
+[go to top](#top)
+
+
+Use [ros1_bridge](<https://github.com/ros2/ros1_bridge>)!
+
+#### **Installation**
+
+```shell
+$ sudo apt install ros-dashing-ros1-bridge
+```
+
+#### **Example: ROS 1 to ROS 2**
+
+[Source](<https://github.com/ros2/ros1_bridge>)
+
+```shell
+# Terminal 1: ROS 1 (Master)
+roscore
+
+# Terminal 2: ROS 1 (Talker)
+rosrun rospy_tutorials talker
+
+# Terminal 3: ROS 2 (Bridge)
+ros2 run ros1_bridge dynamic_bridge
+
+# Terminal 4: ROS 2 (Listener)
+ros2 run demo_nodes_cpp listener
+```
+
+#### **Example: ROS 2 to ROS 1**
+
+[Source](<https://github.com/ros2/ros1_bridge>)
+
+```shell
+# Terminal 1: ROS 1 (Master)
+roscore
+
+# Terminal 2: ROS 1 (Listener)
+rosrun roscpp_tutorials listener
+
+# Terminal 3: ROS 2 (Bridge)
+ros2 run ros1_bridge dynamic_bridge
+
+# Terminal 4: ROS 2 (Talker)
+ros2 run demo_nodes_cpp talker
+```
 
 
 
