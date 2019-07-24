@@ -21,6 +21,13 @@ and [some other places](<http://docs.erlerobotics.com/robot_operating_system/ros
 
 
 
+## Omitted Topics
+
+- [Lifecycle Nodes](https://roscon.ros.org/2018/presentations/ROSCon2018_launch.pdf)
+- [Node Composition](https://index.ros.org/doc/ros2/Tutorials/Composition/)
+
+
+
 ## Table Of Contents <a name="top"></a>
 
 1. [Introduction](#1)    
