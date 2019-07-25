@@ -67,6 +67,8 @@ You have enough in the ecosystem to create a fairly robust autonomous system, an
 
 For this crash course, I'll be assuming that we'll be using ROS Kinetic for Ubuntu 16.04. Make sure you install the correct version of Ubuntu, otherwise it might be troublesome to install ROS (since it's officially supported on only specific distributions!)
 
+You may choose to install a more recent distribution though!
+
 Make sure you **read** the tutorials! Don't just blindly copy terminal commands!
 
 Dualbooting Ubuntu 16.04: https://www.tecmint.com/install-ubuntu-16-04-alongside-with-windows-10-or-8-in-dual-boot/
@@ -134,8 +136,6 @@ $ cd <workspace_directory>/catkin_ws
 $ catkin_make
 ```
 
-
-
 > Please go ahead and install the tutorials package!
 >
 > ```bash
@@ -143,7 +143,6 @@ $ catkin_make
 > $ sudo apt-get install ros-<distro>-ros-tutorials
 > ```
 >
-> 
 
 
 
