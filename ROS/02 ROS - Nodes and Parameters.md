@@ -1396,6 +1396,8 @@ It's pretty simple to make one too! It's just Python.
 
 ![Screenshot-Reconfigure.png](assets/Screenshot-Reconfigure.png)
 
+For the image above, the parameters are stored in `/dynamic_tutorials`. That's because that's the name of the node that spawned the server! It's not defined by the cfg file per se.
+
 [Source](<http://wiki.ros.org/dynamic_reconfigure/Tutorials/HowToWriteYourFirstCfgFile>)
 
 ```python
