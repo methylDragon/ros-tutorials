@@ -1438,8 +1438,8 @@ Let's break down the parameter generator function arguments.
 |        2        | level       | One way to group parameters as you like. Bits of all parameter levels that have changed will be `OR`ed together for the service callback. |
 |        3        | description | Description of the parameter                                 |
 |        4        | default     | Default value of the parameter                               |
-|        5        | min         | Minimum value                                                |
-|        6        | max         | Maximum value                                                |
+|        5        | min         | Minimum value (Not setting this sets min to -inf)            |
+|        6        | max         | Maximum value (Not setting this sets max to inf)             |
 
 #### **Generate Call**
 
