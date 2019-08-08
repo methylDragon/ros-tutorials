@@ -141,7 +141,7 @@ Nodelets work almost like normal ROS nodes in terms of what you can do with them
 
 As such, you can use the publisher and subscriber interfaces (like the one in the `class_pub_sub` package, in the minimal projects directory) in nodelets, in much the same way!
 
-You just need to settle some boilerplate, that we'll adapt from [this tutorial]([http://wiki.ros.org/nodelet/Tutorials/Porting%20nodes%20to%20nodelets](http://wiki.ros.org/nodelet/Tutorials/Porting nodes to nodelets)).
+You just need to settle some boilerplate, that we'll adapt from [this tutorial](http://wiki.ros.org/nodelet/Tutorials/Porting%20nodes%20to%20nodelets).
 
 
 
