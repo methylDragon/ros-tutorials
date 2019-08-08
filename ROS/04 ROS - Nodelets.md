@@ -335,6 +335,8 @@ PLUGINLIB_EXPORT_CLASS(pub_sub_nodelet_example::PubSubNodelet, nodelet::Nodelet)
 
 Additionally! Notice that we didn't put the rate inside the class. There's a bunch of caveats with nodelets that you should be aware of, that we'll talk about in the next section.
 
+> **Also note**: Notice how there isn't a `main()` function! This is because the main function will run within the nodelet manager instead, and the nodelet class will hitchhike on that host process instead!
+
 
 
 ### 2.9 Nodelet Caveats <a name="2.9"></a>
