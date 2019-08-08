@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="nodelet" type="nodelet" name="example_manager"  args="manager" output="screen"/>
+  <node pkg="nodelet" type="nodelet" name="pub_sub_nodelet" args="load pub_sub_nodelet_example/PubSubNodelet example_manager"/>
+</launch>

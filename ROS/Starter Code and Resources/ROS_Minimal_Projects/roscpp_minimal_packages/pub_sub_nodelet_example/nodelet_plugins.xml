@@ -1,0 +1,5 @@
+<library path="lib/libpub_sub_nodelet_example">
+  <class name="pub_sub_nodelet_example/PubSubNodelet" type="pub_sub_nodelet_example::PubSubNodelet" base_class_type="nodelet::Nodelet">
+    <description>Example nodelet that features publisher and subscriber capabilities.</description>
+  </class>
+</library>
