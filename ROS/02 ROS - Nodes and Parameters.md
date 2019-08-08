@@ -2,14 +2,14 @@
 
 Author: methylDragon  
 Fairly comprehensive ROS crash course!  
-I'll be adapting it from the ROS Tutorials:http://wiki.ros.org/ROS/Tutorials    
+I'll be adapting it from the ROS Tutorials: http://wiki.ros.org/ROS/Tutorials    
 and ETHz http://www.rsl.ethz.ch/education-students/lectures/ros.html    
 
 ------
 
 ## Pre-Requisites
 
-- A system with Ubuntu 16.04 installed (no other versions!)
+- A system with ROS installed
 - Linux
 - Python 3 and/or C++
 
