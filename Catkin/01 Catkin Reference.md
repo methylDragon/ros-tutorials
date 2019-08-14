@@ -55,6 +55,8 @@ Most of the notes will be adapted from: http://wiki.ros.org/catkin/Tutorials
    4.13 [Use a Custom Compiler Version)](#4.13)    
    
 
+
+
 ## 1. Introduction
 
 Long story short, when you're making packages for a huge ecosystem such as ROS, you're bound to end up with a lot of problems managing nested dependencies in its many packages.
@@ -821,4 +823,4 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ------
 
-[![Yeah! Buy the DRAGON a COFFEE!](../../_assets/COFFEE%20BUTTON%20%E3%83%BE(%C2%B0%E2%88%87%C2%B0%5E).png)](https://www.buymeacoffee.com/methylDragon)
+[![Yeah! Buy the DRAGON a COFFEE!](../assets/COFFEE%20BUTTON%20%E3%83%BE(%C2%B0%E2%88%87%C2%B0%5E).png)](https://www.buymeacoffee.com/methylDragon)
